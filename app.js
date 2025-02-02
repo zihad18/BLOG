@@ -6,6 +6,13 @@ const session = require('express-session')
 const MongoDBStore = require('connect-mongodb-session')(session)
 const flash = require('connect-flash')
 const config = require('config')
+const chalk = require('chalk');
+
+const testConsole = require('debug')('app:test')
+const dbConsole = require('debug')('app:db')
+testConsole('Test Console')
+dbConsole('Database Console')
+
 // Import Routes
 const authRoutes = require('./routes/authRoute')
 const dashboardRoutes = require('./routes/dashboardRoute')
@@ -75,7 +82,7 @@ const PORT = process.env.PORT || 3000
 
 mongoose.connect(MONGODB_URI,
     { useNewUrlParser: true}).then(()=>{
-        console.log('Database Connected')
+        console.log(chalk.green('Database Connected'))
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`)
         })
