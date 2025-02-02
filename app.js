@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
@@ -59,7 +60,7 @@ app.get('/', (req, res) => {
     res.send('Hello World')
 })
 
-
+console.log(app.get('env'))
 const PORT = process.env.PORT || 3000
 
 mongoose.connect(MONGODB_URI,
