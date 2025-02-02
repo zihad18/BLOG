@@ -1,82 +1,37 @@
 require('dotenv').config()
 const express = require('express')
-const morgan = require('morgan')
 const mongoose = require('mongoose')
-const session = require('express-session')
-const MongoDBStore = require('connect-mongodb-session')(session)
-const flash = require('connect-flash')
 const config = require('config')
 const chalk = require('chalk');
 
-const testConsole = require('debug')('app:test')
-const dbConsole = require('debug')('app:db')
-testConsole('Test Console')
-dbConsole('Database Console')
 
-// Import Routes
-const authRoutes = require('./routes/authRoute')
-const dashboardRoutes = require('./routes/dashboardRoute')
+const setMiddleware = require('./middleware/middleware')
+const setRoutes = require('./routes/routes')
 
-// Import Middleware
-const { bindUserWithRequest } = require('./middleware/authMiddleware')
-const  setLocals  = require('./middleware/setLocals')
 
 // PlayGround Routes
 //const validatorRoutes = require('./playground/validator')
 
 
 const MONGODB_URI = 'mongodb://localhost:27017'
-const store = new MongoDBStore({
-    uri: MONGODB_URI,
-    collection: 'sessions',
-    expires: 1000 * 60 * 60 * 2
-  });
+
 
 const app = express()
 
-console.log(config.get('name'))
 
-// const config = require('./config/config')
-// if(app.get('env').toLowerCase() === 'development'){
-//     console.log(config.dev.name)
-// }
-// else{
-//     console.log(config.prod.name)
-// }
+
+
 
 // Setup View Engine
 app.set('view engine', 'ejs')
 app.set('views', 'views')
 
-// Middleware Array
-const Middleware = [
-    morgan('dev'),
-    express.static('public'),
-    express.urlencoded({ extended: true }),
-    express.json(),
-    session({
-        secret: process.env.SECRET_KEY || 'SECRET_KEY',
-        resave: false,
-        saveUninitialized: false,
-        store: store
-    }),
-    bindUserWithRequest(),
-    setLocals(),
-    flash()
-]
-app.use(Middleware)
+// Using Middleware from Middleware directory
 
-app.use('/auth', authRoutes)
-app.use('/dashboard', dashboardRoutes)
-//app.use('/playground', validatorRoutes)
+setMiddleware(app)
 
-app.get('/', (req, res) => {
-
-    
-
-    res.send('Hello World')
-})
-
+// Using  Routes from Routes directory
+setRoutes(app)
 console.log(app.get('env'))
 const PORT = process.env.PORT || 3000
 
